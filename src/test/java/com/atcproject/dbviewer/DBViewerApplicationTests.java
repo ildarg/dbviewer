@@ -5,6 +5,7 @@ import com.atcproject.dbviewer.repository.ConnectionDetailRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -16,11 +17,14 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 class DBViewerApplicationTests {
 
 	@Autowired
@@ -48,11 +52,10 @@ class DBViewerApplicationTests {
 		this.mockMvc.perform(
 				MockMvcRequestBuilders
 						.get("/api/connections")
-						//.content(asJsonString(new EmployeeVO(null, "firstName4", "lastName4", "email4@mail.com")))
-						//.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(content().string(String.format("[%s]", expectedTestConnectionDetailsJson)));
+				.andExpect(content().string(String.format("[%s]", expectedTestConnectionDetailsJson)))
+				.andDo(document("get connections"));;
 	}
 
 	@Test
@@ -66,7 +69,8 @@ class DBViewerApplicationTests {
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(content().string(expectedTestConnectionDetailsJson));
+				.andExpect(content().string(expectedTestConnectionDetailsJson))
+				.andDo(document("post connection"));;;
 	}
 
 	public static String asJsonString(final Object obj) {
