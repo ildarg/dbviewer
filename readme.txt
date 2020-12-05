@@ -14,7 +14,7 @@ For defined connection id
 How to run:
 1. Install Postgresql (version 10+)
 2. Create user in PostgreSQL (optional)
-3. Create db istance in PostgreSQL
+3. Create db instance in PostgreSQL
 4. Set up application.properties file in root folder of the project to define DB connection details (spring.datasource.url, spring.datasource.username, spring.datasource.password)
 5. Build and run application
 
@@ -24,9 +24,9 @@ initial db data in data-postgres.sql
 
 Not implemented: 
 - Comments for auto documentation
-- Cotroller and Logger in AOP
+- Controller and Logger in AOP
 - Meta data for each column
-- Coverage for all services, only cotroller tests provided 
+- Coverage for all services, only controller tests provided
 - Data return as String to simplify project
 
 API provided:

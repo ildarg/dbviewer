@@ -1,5 +1,6 @@
 package com.atcproject.dbviewer.service;
 
+import com.atcproject.dbviewer.handlers.DBVEntityNotFound;
 import com.atcproject.dbviewer.model.ConnectionDetail;
 import com.atcproject.dbviewer.repository.ConnectionDetailRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,23 +17,27 @@ public class ConnectionService {
 
     private final ConnectionDetailRepository connectionDetailRepository;
 
-    public List<ConnectionDetail> getAllConnections(){
+    public List<ConnectionDetail> getAllConnections() {
         return connectionDetailRepository.findAll();
     }
 
-    public ConnectionDetail getConnectionById(Long id){
-        return connectionDetailRepository.getOne(id);
+    public ConnectionDetail getConnectionDetailsById(Long id) {
+        Optional<ConnectionDetail> conn = connectionDetailRepository.findById(id);
+        if (conn.isEmpty()) {
+            throw new DBVEntityNotFound("Connection", id);
+        }
+        return conn.get();
     }
 
-    public ConnectionDetail saveConnection(ConnectionDetail connectionDetail) {
+    public ConnectionDetail saveConnectionDetails(ConnectionDetail connectionDetail) {
         return connectionDetailRepository.save(connectionDetail);
     }
 
-    public void deleteConnection(ConnectionDetail connectionDetail) {
+    public void deleteConnectionDetails(ConnectionDetail connectionDetail) {
         connectionDetailRepository.delete(connectionDetail);
     }
 
-    public void deleteConnectionById(Long id) {
+    public void deleteConnectionDetailsById(Long id) {
         connectionDetailRepository.deleteById(id);
     }
 }

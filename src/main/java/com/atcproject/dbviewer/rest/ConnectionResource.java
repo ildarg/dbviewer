@@ -8,15 +8,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -37,7 +33,7 @@ public class ConnectionResource {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ConnectionDetail> getConnection(@PathVariable Long id) {
-        final ConnectionDetail connection = connectionService.getConnectionById(id);
+        final ConnectionDetail connection = connectionService.getConnectionDetailsById(id);
         return ResponseEntity.ok(connection);
     }
 
@@ -58,7 +54,7 @@ public class ConnectionResource {
     public ResponseEntity<List<String>> getColumnsByConnection(@PathVariable Long id,
                                                                @RequestParam(required = false) String schema,
                                                                @RequestParam(required = false) String table) {
-        final List<String> tables = databaseService.getColumns(id, schema, table);
+        final List<String> tables = databaseService.getColumnNames(id, schema, table);
         return ResponseEntity.ok(tables);
     }
 
@@ -73,39 +69,25 @@ public class ConnectionResource {
     @PostMapping
     public ResponseEntity<ConnectionDetail> createConnection(@Valid @RequestBody ConnectionDetail connectionDetail) {
         log.debug("connectionDetail {}", connectionDetail);
-        ConnectionDetail savedConnection = connectionService.saveConnection(connectionDetail);
+        ConnectionDetail savedConnection = connectionService.saveConnectionDetails(connectionDetail);
         return ResponseEntity.ok(savedConnection);
     }
 
     @PutMapping
     public ResponseEntity<ConnectionDetail> updateConnection(@Valid @RequestBody ConnectionDetail connectionDetail) {
-        ConnectionDetail updatedConnection = connectionService.saveConnection(connectionDetail);
+        ConnectionDetail updatedConnection = connectionService.saveConnectionDetails(connectionDetail);
         return ResponseEntity.ok(updatedConnection);
     }
 
     @DeleteMapping()
     public ResponseEntity<Void> deleteConnection(@RequestBody ConnectionDetail connectionDetail) {
-        connectionService.deleteConnection(connectionDetail);
+        connectionService.deleteConnectionDetails(connectionDetail);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteConnection(@PathVariable Long id) {
-        connectionService.deleteConnectionById(id);
+        connectionService.deleteConnectionDetailsById(id);
         return ResponseEntity.noContent().build();
-    }
-
-    // better to move to ControllerAdvice class
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
     }
 }

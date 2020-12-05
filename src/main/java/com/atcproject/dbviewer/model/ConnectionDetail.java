@@ -16,7 +16,8 @@ import javax.validation.constraints.NotBlank;
 public class ConnectionDetail extends AbstractSerializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "connection_details_generator")
+    @SequenceGenerator(name = "connection_details_generator", sequenceName = "connections_details_seq", allocationSize = 1)
     private Long id;
 
     @NotBlank(message = "name is mandatory")
@@ -33,7 +34,7 @@ public class ConnectionDetail extends AbstractSerializable {
     @NotBlank(message = "username is mandatory")
     private String username;
 
-    @NotBlank(message = "password is mandatory")
+    @JsonIgnore
     private String password;
 
     @JsonIgnore

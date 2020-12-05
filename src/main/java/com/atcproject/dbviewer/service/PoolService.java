@@ -14,7 +14,7 @@ import java.util.HashMap;
 @SessionScope
 public class PoolService {
 
-    HashMap<Integer, Connection> connectionSet = new HashMap<>();
+    final HashMap<Integer, Connection> connectionSet = new HashMap<>();
 
     public Connection getConnection(String url, String username, String password) throws SQLException {
         final Integer id = url.hashCode();
